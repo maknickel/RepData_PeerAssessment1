@@ -1,30 +1,41 @@
-#load needed libraries 
+---
+Assignment 1  
+author: Mathew Nickel Maunu
+
+load needed libraries 
+
+``` {r include = FALSE}
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
 library(chron)
 library(ggpubr)
+```
+```{r inclue = FALSE }
+knitr::opts_chunk$set(echo = FALSE)
+```
 
 #1.Reading the dataset 
 
+```{r}
 setwd("C:\\Users\\maknickel\\Desktop")
 data <- read.csv("activity.csv", header = TRUE)
 dframe <- data.frame(data)  
-dframe
+```
 
 #2. plotting the steps per day
 
-##creating a sum of the steps per day 
+creating a sum of the steps per day 
 
+```{r echo = TRUE}
 dframe$daynum <- as.numeric(as.factor(dframe$date))
-dframe
-
-
 dframe$dailysteps <- 0
 dframe$steps1 <- dframe$steps
+```
 
 ##removing NA values to make the data easier to work with 
 
+```{r echo = TRUE}
 for(i in 1:nrow(dframe))
 {
   if(is.na(dframe$steps[i]))
@@ -32,8 +43,11 @@ for(i in 1:nrow(dframe))
     dframe$steps1[i] <- 0
   }
 }
+```
 
 ##calculating the steps per day
+
+```{r}
 day <- 1
 for(i in 1:nrow(dframe))
 {
@@ -54,27 +68,37 @@ for(i in 1:nrow(dframe))
     dframe$dailysteps[i] <- dframe$steps1[i]
   }
 }
-dframe
+```
 
 ##making the plot 
+
+```{r}
 datashort <- filter(dframe, dframe$interval == 2355)
 p1 <- hist(datashort$dailysteps)
+p1
+```
 
 #3.Mean and median of steps taken per day 
 
 ##mean 
 
+```{r}
 meansteps <- mean(datashort$dailysteps)
 meansteps
+```
 
 ##median
+
+```{r}
 medsteps <- median(datashort$dailysteps)
 medsteps
+```
 
 #4.Timeseries plot of average number of steps taken 
 
 ##calculate the average steps per interval
 
+```{r}
 avsteps1 <- data.frame(matrix(integer(), nrow = 471, ncol = 2))
 colnames(avsteps1) <- c('interval', 'steps')
 avsteps1$interval <- seq(5, length.out = nrow(avsteps1), by = 5)
@@ -92,30 +116,35 @@ for(i in 1:nrow(dframe))
   }
 }
 avsteps$steps <- avsteps$steps/61
+```
 
 ##plot the new data 
 
+```{r}
 p2 <- ggplot(avsteps, aes(x = interval, y = steps)) + geom_line()
 p2
+```
 
 #5. Interval with the max steps 
-
+```{r}
 moststeps <- slice_max(avsteps, steps)
 moststeps
+```
 
 #6. Code to describe and show a strategy for inputting missing data 
 
-## In order to input missing data simply perform the following steps 
-## 1. read the new data into a data frame with a new name, we will use the name newdata (see part 1 of this script)
-## 2a. if adding to the top: data <- rbind(newdata, data) (and when adding to the bottom simply reverse the order in the brackets following the rbind command)
-## 2b. if adding to the middle: data <- add_row(steps, date, interval, .before = desired row number)
-## 3. rerun the script to get the data you need
-## if trying to change a specific cell simply indicate the cell desired: data[row, col] <- newdata
+# In order to input missing data simply perform the following steps 
+# 1. read the new data into a data frame with a new name, we will use the name newdata (see part 1 of this script)
+# 2a. if adding to the top: data <- rbind(newdata, data) (and when adding to the bottom simply reverse the order in the brackets following the rbind command)
+# 2b. if adding to the middle: data <- add_row(steps, date, interval, .before = desired row number)
+# 3. rerun the script to get the data you need
+# if trying to change a specific cell simply indicate the cell desired: data[row, col] <- newdata
 
 #7. Missing values 
 
-## calculate rows with NA and fill with averages from #4.
+# calculate rows with NA and fill with averages from #4.
 
+```{r}
 NAs <- sum(!complete.cases(dframe))
 NAs
 
@@ -128,9 +157,12 @@ for(i in 1:nrow(filled))
         filled$steps[i] <- avsteps$steps[(filled$interval[i]/5+1)]
     }
 }
+```
 
-##make a histogram of the total steps each day (filled)
-##calculating the steps per day (filled)
+#make a histogram of the total steps each day (filled)
+#calculating the steps per day (filled)
+
+```{r}
 day <- 1
 for(i in 1:nrow(filled))
 {
@@ -151,32 +183,39 @@ for(i in 1:nrow(filled))
     filled$dailysteps[i] <- filled$steps1[i]
   }
 }
-filled
+```
 
-##making the plot (filled)
+#making the plot (filled)
+```{r}
 datashort2 <- filter(filled, filled$interval == 2355)
 p3 <- hist(datashort2$dailysteps)
-p3 
+```
 
-##Mean and median of steps taken per day (filled)
+#Mean and median of steps taken per day (filled)
 
-##mean 
+#mean 
 
+```{r}
 meansteps2 <- mean(datashort2$dailysteps)
 meansteps2
+```
 
-##median
+#median
+
+```{r}
 medsteps2 <- median(datashort2$dailysteps)
 medsteps2
+```
 
-##Median steps remains the same, mean steps increases by approx 1000 steps.
+#Median steps remains the same, mean steps increases by approx 1000 steps.
 ##The number of days with steps in the 5000 - 10 000 bin increases and these 
-##values are removed from the 0 - 5000 bin (approx 10% transfer).
+#values are removed from the 0 - 5000 bin (approx 10% transfer).
 
 #8. Weekend walking 
 
-##update the dataset with the new data
+#update the dataset with the new data
 
+```{r}
 for (i in 1:nrow(filled))
 {
   if(is.weekend(filled$date[i]))
@@ -188,8 +227,11 @@ for (i in 1:nrow(filled))
     filled$datefactor <- "weekday"   
   }
 }
+```
 
-##make datasets with the weekend/day average data
+#make datasets with the weekend/day average data
+
+```{r}
 avstepswd1 <- data.frame(matrix(integer(), nrow = 471, ncol = 2))
 colnames(avstepswd1) <- c('interval', 'steps')
 avstepswd1$interval <- seq(5, length.out = nrow(avsteps1), by = 5)
@@ -223,7 +265,6 @@ for(i in 1:nrow(filled))
         }
     }
 }
-endcount
 avstepsweekend$steps <- avstepsweekend$steps/endcount
 
 avstepswy1 <- data.frame(matrix(integer(), nrow = 471, ncol = 2))
@@ -245,7 +286,7 @@ for(i in 1:nrow(filled))
     }
   }
 }
-avstepsweekday
+
 endcount2 <- 0 
 date2 <- ""
 for(i in 1:nrow(filled))
@@ -259,13 +300,15 @@ for(i in 1:nrow(filled))
     }
   }
 }
-endcount2
 avstepsweekday$steps <- avstepsweekday$steps/endcount2
+```
 
 #plot the steps/interval together 
+
+```{r}
 p4 <- ggplot(avstepsweekend, aes(x = interval, y = steps)) + geom_line()
 p5 <- ggplot(avstepsweekday, aes(x = interval, y = steps)) + geom_line()
-p6 <- ggarrange(p4, p5, labels = c("weekend", "weekday"), ncol = 1, nrow = 2)
-p6 
+ggarrange(p4, p5, labels = c("weekend", "weekday"), ncol = 1, nrow = 2)
+```
 
-
+ 
