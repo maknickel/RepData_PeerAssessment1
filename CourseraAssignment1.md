@@ -11,6 +11,11 @@ library(tidyverse)
 library(chron)
 library(ggpubr)
 ```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 #1.Reading the dataset 
 
 ```{r}
