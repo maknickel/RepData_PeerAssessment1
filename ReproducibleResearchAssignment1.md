@@ -5,8 +5,6 @@ author: Mathew Nickel Maunu
 
 load needed libraries
 
-    knitr::opts_chunk$set(echo = FALSE)
-
 \#1.Reading the dataset
 
 \#2. plotting the steps per day
